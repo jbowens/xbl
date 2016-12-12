@@ -16,7 +16,7 @@ func testClient(t *testing.T) *Client {
 
 func TestProfile(t *testing.T) {
 	c := testClient(t)
-	p, err := c.Profile(c.credentials.xid)
+	p, err := c.Profiles(c.credentials.xid)
 	if err != nil {
 		t.Fatal(err)
 	}

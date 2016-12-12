@@ -42,6 +42,7 @@ func Login(username, password string) (*Client, error) {
 
 	return &Client{
 		credentials: creds,
+		client:      *http.DefaultClient,
 	}, nil
 }
 
