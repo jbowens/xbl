@@ -8,13 +8,13 @@ import (
 // Profile describe's a gamer's Xbox Live account.
 type Profile struct {
 	ID             string `json:"-"`
-	Gamertag       string `json:"Gamertag"`
-	Gamerscore     int    `json:"Gamerscore"`
-	GamerPicture   string `json:"GameDisplayPicRaw"`
-	AccountTier    string `json:"AccountTier"`
-	Reputation     string `json:"XboxOneRep"`
-	PreferredColor string `json:"PreferredColor"`
-	Tenure         int    `json:"TenureLevel"`
+	Gamertag       string `json:"gamertag"`
+	Gamerscore     int    `json:"gamerscore"`
+	GamerPicture   string `json:"gamer_picture"`
+	AccountTier    string `json:"account_tier"`
+	Reputation     string `json:"reputation"`
+	PreferredColor string `json:"preferred_color"`
+	Tenure         int    `json:"tenure_level"`
 }
 
 // Profile retrieves the profile for a user with the provided ID.
