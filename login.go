@@ -10,7 +10,6 @@ import (
 	"net/http/cookiejar"
 	"net/url"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -143,8 +142,6 @@ func getCredentials(c *http.Client, username, password, authorizeURL, ppft strin
 		"i21":          {"0"},
 	}
 
-	t := time.Now()
-
 	req, err := http.NewRequest("POST", authorizeURL, strings.NewReader(p.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Referer", authorizeURL)
@@ -159,6 +156,9 @@ func getCredentials(c *http.Client, username, password, authorizeURL, ppft strin
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 302 {
+		return nil, errors.New("unable to login; verify your username and password")
+	}
 	u, err := url.Parse(resp.Header.Get("Location"))
 	if err != nil {
 		return nil, err
@@ -168,17 +168,14 @@ func getCredentials(c *http.Client, username, password, authorizeURL, ppft strin
 	if err != nil {
 		return nil, err
 	}
-
-	expiresIn, err := strconv.Atoi(authValues["expires_in"][0])
-	if err != nil {
-		return nil, err
+	if len(authValues["access_token"]) < 1 {
+		return nil, fmt.Errorf("bad login access token, url: %s", u)
 	}
 
 	return &credentials{
 		accessToken:  authValues["access_token"][0],
 		refreshToken: authValues["refresh_token"][0],
 		userID:       authValues["user_id"][0],
-		expiresAt:    t.Add(time.Duration(expiresIn) * time.Second),
 	}, nil
 }
 
