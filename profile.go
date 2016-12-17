@@ -12,11 +12,11 @@ type Profile struct {
 	ID             string `json:"id"`
 	Gamertag       string `json:"gamertag,omitempty"`
 	Gamerscore     int    `json:"gamerscore,omitempty"`
-	GamerPicture   string `json:"gamer_picture,omitempty"`
+	GamerPicture   string `json:"picture_url,omitempty"`
 	AccountTier    string `json:"account_tier,omitempty"`
 	Reputation     string `json:"reputation,omitempty"`
-	PreferredColor string `json:"preferred_color,omitempty"`
-	Tenure         int    `json:"tenure_level,omitempty"`
+	PreferredColor string `json:"-"`
+	Tenure         int    `json:"-"`
 	Bio            string `json:"bio,omitempty"`
 	Location       string `json:"location,omitempty"`
 }
