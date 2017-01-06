@@ -43,11 +43,12 @@ type pagingInfo struct {
 
 // Achievements retrieves all achievements for the provided XID.
 func (c *Client) Achievements(xid string) ([]Achievement, error) {
+	queryParams := url.Values{"maxItems": {"1000"}, "orderBy": {"EndingSoon"}}
 	u := url.URL{
 		Scheme:   "https",
 		Host:     "achievements.xboxlive.com",
 		Path:     fmt.Sprintf("/users/xuid(%s)/achievements", xid),
-		RawQuery: url.Values{"maxItems": {"1000"}, "orderBy": {"EndingSoon"}}.Encode(),
+		RawQuery: queryParams.Encode(),
 	}
 
 	var resp achievementsResponse
@@ -56,8 +57,17 @@ func (c *Client) Achievements(xid string) ([]Achievement, error) {
 		return nil, err
 	}
 
-	// TODO(jackson): Use paging info and collect all of the pages of
-	// achievements.
+	achievements := make([]Achievement, 0, resp.PagingInfo.TotalRecords)
+	achievements = append(achievements, resp.Achievements...)
+	for resp.PagingInfo.ContinuationToken != nil {
+		queryParams.Set("continuationToken", *resp.PagingInfo.ContinuationToken)
+		u.RawQuery = queryParams.Encode()
 
-	return resp.Achievements, nil
+		err := c.get(u.String(), vBoth, &resp)
+		if err != nil {
+			return nil, err
+		}
+		achievements = append(achievements, resp.Achievements...)
+	}
+	return achievements, nil
 }
