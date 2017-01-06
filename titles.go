@@ -31,7 +31,12 @@ type titlesResponse struct {
 }
 
 // Titles retrieves all Xbox titles played by the provided XID.
-func (c *Client) Titles(xid string) ([]Title, error) {
+func (c *Client) Titles(xid string, opts ...Option) ([]Title, error) {
+	var reqOpts reqOptions
+	for _, opt := range opts {
+		opt(&reqOpts)
+	}
+
 	queryParams := url.Values{"orderBy": {"unlockTime"}}
 	u := url.URL{
 		Scheme:   "https",
@@ -47,7 +52,13 @@ func (c *Client) Titles(xid string) ([]Title, error) {
 	}
 
 	titles := make([]Title, 0, resp.PagingInfo.TotalRecords)
-	titles = append(titles, resp.Titles...)
+	for _, t := range titles {
+		if t.LastPlayed.Before(reqOpts.updatedSince) {
+			return titles, nil
+		}
+		titles = append(titles, t)
+	}
+
 	for resp.PagingInfo.ContinuationToken != nil {
 		queryParams.Set("continuationToken", *resp.PagingInfo.ContinuationToken)
 		u.RawQuery = queryParams.Encode()
@@ -56,7 +67,13 @@ func (c *Client) Titles(xid string) ([]Title, error) {
 		if err != nil {
 			return nil, err
 		}
-		titles = append(titles, resp.Titles...)
+
+		for _, t := range resp.Titles {
+			if t.LastPlayed.Before(reqOpts.updatedSince) {
+				return titles, nil
+			}
+			titles = append(titles, t)
+		}
 	}
 	return titles, nil
 }

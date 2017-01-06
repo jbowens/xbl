@@ -88,3 +88,16 @@ func (c *Client) get(u string, v apiVersion, respBody interface{}) error {
 
 	return json.NewDecoder(resp.Body).Decode(respBody)
 }
+
+type reqOptions struct {
+	updatedSince time.Time
+}
+
+// Option defines an option for a client method.
+type Option func(*reqOptions)
+
+// UpdatedSince will filter results to only results updated since the
+// provided time.
+func UpdatedSince(t time.Time) func(*reqOptions) {
+	return func(ro *reqOptions) { ro.updatedSince = t }
+}
