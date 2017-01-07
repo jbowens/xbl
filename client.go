@@ -98,6 +98,6 @@ type Option func(*reqOptions)
 
 // UpdatedSince will filter results to only results updated since the
 // provided time.
-func UpdatedSince(t time.Time) func(*reqOptions) {
+func UpdatedSince(t time.Time) Option {
 	return func(ro *reqOptions) { ro.updatedSince = t }
 }
