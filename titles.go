@@ -8,16 +8,16 @@ import (
 
 // Title represents an individual Xbox title.
 type Title struct {
-	ID                  int       `json:"titleId"`
+	ID                  int64     `json:"titleId"`
 	Type                int       `json:"titleType"`
 	Platforms           []int     `json:"platforms"`
 	Name                string    `json:"name"`
 	LastPlayed          time.Time `json:"lastPlayed"`
-	CurrentAchievements int       `json:"currentAchievements"`
-	CurrentGamerscore   int       `json:"currentGamerscore"`
-	Sequence            int       `json:"sequence"`
-	TotalAchievements   int       `json:"totalAchievements"`
-	TotalGamerscore     int       `json:"totalGamerscore"`
+	CurrentAchievements int64     `json:"currentAchievements"`
+	CurrentGamerscore   int64     `json:"currentGamerscore"`
+	Sequence            int64     `json:"sequence"`
+	TotalAchievements   int64     `json:"totalAchievements"`
+	TotalGamerscore     int64     `json:"totalGamerscore"`
 	RareUnlocks         []struct {
 		RarityCategory   string `json:"rarityCategory"`
 		NumUnlocks       int    `json:"numUnlocks"`
